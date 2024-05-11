@@ -5,9 +5,6 @@ const SNAKE_INITIAL_SPEED = 1;
 const CANVAS_SIZE = BOARD_SIZE * CELL_SIZE;
 
 function getGameState() {
-    function getfoodPosition() {
-        return Math.floor(Math.random() * BOARD_SIZE);
-    }
     const gameState = {
         score: 0,
         boardLocked: false,
@@ -17,19 +14,13 @@ function getGameState() {
             position: new SnakePosition(),
         },
         food: {
-            x: getfoodPosition(),
-            y: getfoodPosition(),
+            x: 0,
+            y: 0,
         },
     }
-    while (
-        gameState.snake.position.value.some(segment => {
-            return segment.x === gameState.food.x && segment.y === gameState.food.y
-        })
 
-    ) {
-        gameState.food.x = getfoodPosition();
-        gameState.food.y = getfoodPosition();
-    }
+    gameState.food = getRandomFoodPosition(gameState);
+
     return gameState;
 }
 
@@ -56,6 +47,24 @@ class SnakePosition {
         return index >= 0 ? this.value[index] : this.value[this.value.length + index];
     }
 
+}
+/**
+ * 
+ * @param {ReturnType<typeof getGameState>} gameState 
+ */
+function getRandomFoodPosition(gameState) {
+    const rand = () => Math.floor(Math.random() * BOARD_SIZE);
+    const foodPosition = { x: rand(), y: rand() };
+    while (
+        gameState.snake.position.value.some(segment => {
+            return segment.x === foodPosition.x && segment.y === foodPosition.y
+        })
+
+    ) {
+        foodPosition.x = rand();
+        foodPosition.y = rand();
+    }
+    return foodPosition;
 }
 
 function getContext() {
@@ -201,7 +210,6 @@ function isCollidingWithSelf(nextSnakePosition) {
     })
 }
 
-
 /**
  * 
  * @param {ReturnType<typeof getGameState>} gameState 
@@ -229,8 +237,7 @@ function handleFoodCollision(gameState, nextSnakePosition) {
     nextSnakePosition.value.push(newSnakePart);
     gameState.snake.speed += 0.05;
     gameState.score += 1;
-    gameState.food.x = Math.floor(Math.random() * BOARD_SIZE);
-    gameState.food.y = Math.floor(Math.random() * BOARD_SIZE);
+    gameState.food = getRandomFoodPosition(gameState);
 }
 
 /**
@@ -288,6 +295,7 @@ function animate(gameState) {
         requestAnimationFrame(() => animate(gameState));
     }, 1 * 1000 / gameState.snake.speed);
 }
+
 const gameState = getGameState();
 addKeyListeners(gameState);
 animate(gameState);
