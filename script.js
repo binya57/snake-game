@@ -4,7 +4,13 @@ const CELL_SIZE = 50;
 const SNAKE_INITIAL_SPEED = 1;
 const CANVAS_SIZE = BOARD_SIZE * CELL_SIZE;
 
-function getGameState() {
+
+/**
+ * 
+ * @typedef {ReturnType<typeof initializeGameState>} GameState
+ */
+
+function initializeGameState() {
     const gameState = {
         score: 0,
         boardLocked: false,
@@ -50,7 +56,7 @@ class SnakePosition {
 }
 /**
  * 
- * @param {ReturnType<typeof getGameState>} gameState 
+ * @param {GameState} gameState 
  */
 function getRandomFoodPosition(gameState) {
     const rand = () => Math.floor(Math.random() * BOARD_SIZE);
@@ -85,7 +91,7 @@ function getContext() {
 /**
  * 
  * @param {CanvasRenderingContext2D} ctx 
- * @param {ReturnType<typeof getGameState>} gameState
+ * @param {GameState} gameState
  */
 function drawGame(ctx, gameState) {
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -115,7 +121,7 @@ function drawGrid(ctx) {
 /**
  * 
  * @param {CanvasRenderingContext2D} ctx 
- * @param {ReturnType<typeof getGameState>['food']} food 
+ * @param {GameState['food']} food 
  */
 function drawFood(ctx, food) {
     ctx.beginPath();
@@ -127,7 +133,7 @@ function drawFood(ctx, food) {
 /**
  * 
  * @param {CanvasRenderingContext2D} ctx 
- * @param {ReturnType<typeof getGameState>['snake']} snake 
+ * @param {GameState['snake']} snake 
  */
 function drawSnake(ctx, snake) {
     snake.position.value.forEach(segment => {
@@ -138,7 +144,7 @@ function drawSnake(ctx, snake) {
 
 /**
  * 
- * @param {ReturnType<typeof getGameState>} gameState 
+ * @param {GameState} gameState 
  */
 function updateGameState(gameState) {
     const nextSnakePosition = calcNewSnakePosition(gameState);
@@ -154,7 +160,7 @@ function updateGameState(gameState) {
 
 /**
  * 
- * @param {ReturnType<typeof getGameState>} gameState 
+ * @param {GameState} gameState 
  */
 function calcNewSnakePosition(gameState) {
     const { direction, position } = gameState.snake;
@@ -188,7 +194,7 @@ function calcNewSnakePosition(gameState) {
 
 /**
  * 
- * @param {ReturnType<typeof getGameState>} gameState 
+ * @param {GameState} gameState 
  * @param {ReturnType<typeof calcNewSnakePosition>} nextSnakePosition 
  */
 function isCollidingWithFood(gameState, nextSnakePosition) {
@@ -212,7 +218,7 @@ function isCollidingWithSelf(nextSnakePosition) {
 
 /**
  * 
- * @param {ReturnType<typeof getGameState>} gameState 
+ * @param {GameState} gameState 
  * @param {ReturnType<typeof calcNewSnakePosition>} nextSnakePosition 
  */
 function handleFoodCollision(gameState, nextSnakePosition) {
@@ -242,7 +248,7 @@ function handleFoodCollision(gameState, nextSnakePosition) {
 
 /**
  * 
- * @param {ReturnType<typeof getGameState>} gameState 
+ * @param {GameState} gameState 
  */
 function addKeyListeners(gameState) {
     let pressed = '';
@@ -286,7 +292,7 @@ function addKeyListeners(gameState) {
 
 /**
  * 
- * @param {ReturnType<typeof getGameState>} gameState
+ * @param {GameState} gameState
  */
 function animate(gameState) {
     updateGameState(gameState);
@@ -296,6 +302,6 @@ function animate(gameState) {
     }, 1 * 1000 / gameState.snake.speed);
 }
 
-const gameState = getGameState();
+const gameState = initializeGameState();
 addKeyListeners(gameState);
 animate(gameState);
