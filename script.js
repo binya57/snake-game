@@ -257,36 +257,38 @@ function addKeyListeners(gameState) {
         pressed = event.key;
         switch (event.key) {
             case 'ArrowLeft':
-                if (gameState.snake.direction === 'right') return;
+                if (gameState.snake.direction === 'right' || gameState.boardLocked) return;
                 gameState.snake.direction = 'left';
+                gameState.boardLocked = true; // prevent direction change before next animation run
                 break;
             case 'ArrowUp':
-                if (gameState.snake.direction === 'down') return;
+                if (gameState.snake.direction === 'down' || gameState.boardLocked) return;
                 gameState.snake.direction = 'up';
+                gameState.boardLocked = true; // prevent direction change before next animation run
                 break;
             case 'ArrowRight':
-                if (gameState.snake.direction === 'left') return;
+                if (gameState.snake.direction === 'left' || gameState.boardLocked) return;
                 gameState.snake.direction = 'right';
+                gameState.boardLocked = true; // prevent direction change before next animation run
                 break;
             case 'ArrowDown':
-                if (gameState.snake.direction === 'up') return;
+                if (gameState.snake.direction === 'up' || gameState.boardLocked) return;
                 gameState.snake.direction = 'down';
+                gameState.boardLocked = true; // prevent direction change before next animation run
                 break;
             default:
                 break;
         }
         if (pressed === event.key && prevSpeed === gameState.snake.speed) {
-            console.log('increase speed');
             prevSpeed = gameState.snake.speed;
             gameState.snake.speed = gameState.snake.speed * 2;
             return;
         }
 
     })
-    document.addEventListener('keyup', event => {
+    document.addEventListener('keyup', () => {
         pressed = '';
         gameState.snake.speed = prevSpeed;
-        console.log('normal speed');
     })
 }
 
@@ -297,6 +299,7 @@ function addKeyListeners(gameState) {
 function animate(gameState) {
     updateGameState(gameState);
     drawGame(getContext(), gameState);
+    gameState.boardLocked = false;
     setTimeout(() => {
         requestAnimationFrame(() => animate(gameState));
     }, 1 * 1000 / gameState.snake.speed);
