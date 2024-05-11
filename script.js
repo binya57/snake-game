@@ -324,9 +324,16 @@ function updateTrackBar(gameState) {
         time.className = 'time';
         bar.appendChild(time);
     }
+    let snakeSpeed = bar.querySelector('.snake-speed');
+    if (!snakeSpeed) {
+        snakeSpeed = document.createElement('span');
+        snakeSpeed.className = 'snake-speed';
+        bar.appendChild(snakeSpeed);
+    }
     score.textContent = `Score: ${gameState.score}`;
     snakeLength.textContent = `Snake length: ${gameState.snake.position.value.length}`;
     time.textContent = `Time: ${displayTimeInMinutesAndSeconds(gameState.time)}`;
+    snakeSpeed.textContent = `Snake speed: ${gameState.snake.speed}x`;
 }
 
 /**
