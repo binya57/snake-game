@@ -14,6 +14,8 @@ function initializeGameState() {
     const gameState = {
         score: 0,
         boardLocked: false,
+        gameEnded: false,
+        time: 0,
         snake: {
             direction: 'right',
             speed: SNAKE_INITIAL_SPEED,
@@ -98,6 +100,7 @@ function drawGame(ctx, gameState) {
     drawGrid(ctx);
     drawSnake(ctx, gameState.snake);
     drawFood(ctx, gameState.food);
+    updateTrackBar(gameState);
 }
 
 /**
@@ -156,6 +159,7 @@ function updateGameState(gameState) {
         handleFoodCollision(gameState, nextSnakePosition);
     }
     gameState.snake.position = nextSnakePosition;
+    gameState.time += 1;
 }
 
 /**
@@ -290,6 +294,49 @@ function addKeyListeners(gameState) {
         pressed = '';
         gameState.snake.speed = prevSpeed;
     })
+}
+/**
+ * 
+ * @param {GameState} gameState 
+ */
+function updateTrackBar(gameState) {
+    let bar = document.querySelector('.track-bar');
+    if (!bar) {
+        bar = document.createElement('div');
+        bar.className = 'track-bar';
+        document.body.insertBefore(bar, document.body.firstChild);
+    }
+    let score = bar.querySelector('.score');
+    if (!score) {
+        score = document.createElement('span');
+        score.className = 'score';
+        bar.appendChild(score);
+    }
+    let snakeLength = bar.querySelector('.snake-length');
+    if (!snakeLength) {
+        snakeLength = document.createElement('span');
+        snakeLength.className = 'snake-length';
+        bar.appendChild(snakeLength);
+    }
+    let time = bar.querySelector('.time');
+    if (!time) {
+        time = document.createElement('span');
+        time.className = 'time';
+        bar.appendChild(time);
+    }
+    score.textContent = `Score: ${gameState.score}`;
+    snakeLength.textContent = `Snake length: ${gameState.snake.position.value.length}`;
+    time.textContent = `Time: ${displayTimeInMinutesAndSeconds(gameState.time)}`;
+}
+
+/**
+ * 
+ * @param {number} time  
+ */
+function displayTimeInMinutesAndSeconds(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
 /**
